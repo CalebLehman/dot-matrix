@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS Address (
+  Name     TEXT NOT NULL,
+  Location TEXT NOT NULL,
+  PRIMARY KEY (Name),
+  UNIQUE (Name COLLATE NOCASE)
+)
