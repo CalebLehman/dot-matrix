@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  bot:
+    build: .
+    volumes:
+      - local-sqlite-db:/app/database
+
+volumes:
+  local-sqlite-db:
