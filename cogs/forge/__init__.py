@@ -30,6 +30,7 @@ class ForgeCog(GroupCog, name='forge'):
     @tasks.loop(hours=QUERY_INTERVAL_HOURS)
     async def update_events(self) -> None:
         self.events = await get_events()
+        log.info(f'Retrieved {len(self.events)} events from {FORGE_URL}')
 
     def cog_unload(self):
         self.update_events.cancel()
