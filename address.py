@@ -1,31 +1,41 @@
 from typing import Optional
 from urllib.parse import quote_plus
 
-from discord import app_commands, Color, Embed, Interaction
+from discord import app_commands, ButtonStyle, Color, Embed, File, Interaction
 from discord.app_commands import Choice
 from discord.ext.commands import Bot, GroupCog
+from discord.ui import Button, View
 
 from database import Database
 
 
 class ErrorEmbed(Embed):
-    def __init__(self, op: str, reason: str):
+    def __init__(self, op: str, reason: str) -> None:
         super().__init__(color=Color.red(), title=f'Error during `/address {op}`', description=reason)
 
 
 class AddressEmbed(Embed):
-    def __init__(self, op: str, name: str, location: Optional[str] = None):
+    def __init__(self, op: str, name: str, location: Optional[str] = None) -> None:
         title = f'Successfully competed `/address {op}`'
         color = Color.blurple()
         if location is not None:
-            description = '\n'.join([
-                f'>>> **{name}**',
-                location,
-                f'[Google Maps link](https://www.google.com/maps/search/?api=1&query={quote_plus(location)})',
-            ])
+            description = f'''
+>>> **{name}**
+{location}
+'''
             super().__init__(color=color, title=title, description=description)
         else:
             super().__init__(color=color, title=title)
+
+
+class AddressView(View):
+    def __init__(self, location: str) -> None:
+        super().__init__()
+        self.add_item(Button(
+            label='Google Maps',
+            url=f'https://www.google.com/maps/search/?api=1&query={quote_plus(location)}',
+            style=ButtonStyle.link,
+        ))
 
 
 class AddressCog(GroupCog, name='address'):
@@ -33,6 +43,18 @@ class AddressCog(GroupCog, name='address'):
         self.database = Database()
         self.autocomplete_cache = None
         super().__init__()
+
+    @app_commands.command(name='about', description='Information about the `address` group')
+    async def about_command(self, interaction: Interaction) -> None:
+        description = '''
+A group of commands for managing a **collection of addresses**. \
+The **goal** is to eliminate the need for all *what was your address again?*-type questions in the chat. \
+To see the available commands, type `/address` and look through the autocomplete options.
+'''
+        embed = Embed(title='About `address`', description=description)
+        embed.set_image(url='attachment://address_about.png')
+        file = File('assets/address_about.png')
+        await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
     @app_commands.command(name='set', description='Set a new address')
     async def set_command(self, interaction: Interaction, name: str, location: str) -> None:
@@ -44,7 +66,8 @@ class AddressCog(GroupCog, name='address'):
         self.database.create_address(name, location)
         name, location = self.database.get_address(name)
         embed: Embed = AddressEmbed(op=op, name=name, location=location)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        view: View = AddressView(location=location)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
     @app_commands.command(name='update', description='Update an existing addres')
     async def update_command(
@@ -76,7 +99,8 @@ class AddressCog(GroupCog, name='address'):
         location: str
         name, location = self.database.get_address(new_name)
         embed: Embed = AddressEmbed(op=op, name=name, location=location)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        view: View = AddressView(location=location)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
     @app_commands.command(name='get', description='Get an existing address')
     async def get_command(self, interaction: Interaction, name: str) -> None:
@@ -88,7 +112,8 @@ class AddressCog(GroupCog, name='address'):
         location: str
         name, location = self.database.get_address(name)
         embed: Embed = AddressEmbed(op=op, name=name, location=location)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        view: View = AddressView(location=location)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
     @app_commands.command(name='delete', description='Delete an existing address')
     async def delete_command(self, interaction: Interaction, name: str) -> None:
