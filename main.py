@@ -9,7 +9,7 @@ from util.config import get_config
 logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S',
     style='{',
-    format='{asctime},{levelname},{name},{message}',
+    format='[{asctime}] [{levelname:8}] {name}: {message}',
 )
 log: logging.Logger = logging.getLogger(__name__)
 
