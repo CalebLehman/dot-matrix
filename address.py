@@ -55,6 +55,7 @@ class AddressCog(GroupCog, name='address'):
         new_location: Optional[str],
     ) -> None:
         op = 'update'
+        new_name = new_name or old_name
         if not self.database.address_exists(old_name):
             embed: Embed = ErrorEmbed(op=op, reason=f'Failed to update address *{old_name}* (does not exist)')
             await interaction.response.send_message(embed=embed, ephemeral=True)
