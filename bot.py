@@ -20,7 +20,7 @@ class Bot(commands.Bot):
             description = '''
 A [Discord Bot](https://discord.com/developers/docs/intro#bots-and-apps) for whatever!
 
-Current command groups are `dot` and `address`. \
+Current command groups are `dot`, `address`, and `forge`. \
 Use `/<group> about` to learn more about a particular group, \
 or just type `/<group>` and look at the autocomplete options.
 '''
