@@ -4,7 +4,7 @@ services:
   bot:
     build: .
     volumes:
-      - local-sqlite-db:/app/database
+      - address-db:/app/cogs/address/database
 
 volumes:
-  local-sqlite-db:
+  address-db:

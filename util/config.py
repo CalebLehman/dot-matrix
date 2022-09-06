@@ -11,10 +11,17 @@ __config = None
 
 
 @dataclass
+class Database:
+    database: str
+    schema: str
+
+
+@dataclass
 class Config:
     token: str
     prefix: str
     log_level: str
+    databases: dict[Database]
 
 
 def get_config():
@@ -26,7 +33,8 @@ def get_config():
 
 def __init_config():
     environment = {
-        **dotenv_values(),
+        **dotenv_values('.env'),
+        **dotenv_values('.env.dev'),
         **os.environ,
     }
     optional_variables = {
@@ -51,4 +59,7 @@ def __init_config():
         token=environment['BOT_TOKEN'],
         prefix=environment['BOT_PREFIX'],
         log_level=environment['BOT_LOGLEVEL'],
+        databases={
+            'address': Database(database='cogs/address/database/database.db', schema='cogs/address/database/schema.sql'),
+        }
     )

@@ -2,19 +2,17 @@ import sqlite3
 from typing import Any, Optional
 from contextlib import closing
 
-SCHEMA_FILE = 'database/schema.sql'
-DATABASE_FILE = 'database/database.db'
-
 
 class Database():
-    def __init__(self) -> None:
+    def __init__(self, schema_file: str, database_file: str) -> None:
+        self.database_file = database_file
         with closing(self.__get_connection()) as connection:
-            with open(SCHEMA_FILE, 'r') as schema:
+            with open(schema_file, 'r') as schema:
                 connection.cursor().executescript(schema.read())
             connection.commit()
 
     def __get_connection(self) -> sqlite3.Connection:
-        return sqlite3.connect(DATABASE_FILE)
+        return sqlite3.connect(self.database_file)
 
     def __execute_non_query(self, script: str, parameters: list[str]) -> None:
         with closing(self.__get_connection()) as database:

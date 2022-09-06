@@ -6,7 +6,8 @@ from discord.app_commands import Choice
 from discord.ext.commands import Bot, GroupCog
 from discord.ui import Button, View
 
-from database import Database
+from util.config import get_config
+from cogs.address.database import Database
 
 
 class ErrorEmbed(Embed):
@@ -40,7 +41,10 @@ class AddressView(View):
 
 class AddressCog(GroupCog, name='address'):
     def __init__(self) -> None:
-        self.database = Database()
+        self.database = Database(
+            schema_file=get_config().databases['address'].schema,
+            database_file=get_config().databases['address'].database,
+        )
         self.autocomplete_cache = None
         super().__init__()
 
@@ -52,8 +56,8 @@ The **goal** is to eliminate the need for all *what was your address again?*-typ
 To see the available commands, type `/address` and look through the autocomplete options.
 '''
         embed = Embed(title='About `address`', description=description)
-        embed.set_image(url='attachment://address_about.png')
-        file = File('assets/address_about.png')
+        embed.set_image(url='attachment://about.png')
+        file = File('cogs/address/assets/about.png')
         await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
     @app_commands.command(name='set', description='Set a new address')
