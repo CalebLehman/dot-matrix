@@ -82,6 +82,10 @@ To see the available commands, type `/address` and look through the autocomplete
         new_location: Optional[str],
     ) -> None:
         op = 'update'
+        if new_name is None and new_location is None:
+            embed: Embed = ErrorEmbed(op=op, reason='Failed to update because no updates were provided')
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
         new_name = new_name or old_name
         if not self.database.address_exists(old_name):
             embed: Embed = ErrorEmbed(op=op, reason=f'Failed to update address *{old_name}* (does not exist)')
@@ -92,10 +96,6 @@ To see the available commands, type `/address` and look through the autocomplete
                 op=op,
                 reason=f'Failed to update address *{old_name}* to *{new_name}* (already exists)',
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        if new_name is None and new_location is None:
-            embed: Embed = ErrorEmbed(op=op, reason='Failed to update because no updates were provided')
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         self.database.update_address(old_name, new_name, new_location)
