@@ -45,7 +45,9 @@ or just type `/<group>` and look at the autocomplete options.
 
         @self.event
         async def on_app_command_completion(interaction: Interaction, command: app_commands.Command) -> None:
-            log.info(
-                f'Ran \'{command.qualified_name} {list(interaction.namespace)}\''
-                f' for \'{interaction.user}\' (ID {interaction.user.id})'
-            )
+            name = command.qualified_name
+            args = list(interaction.namespace)
+            if len(args) > 0:
+                log.info(f'Ran \'{name} {args}\' for \'{interaction.user}\' (ID {interaction.user.id})')
+            else:
+                log.info(f'Ran \'{name}\' for \'{interaction.user}\' (ID {interaction.user.id})')
