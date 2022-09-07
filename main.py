@@ -1,6 +1,7 @@
 import sys
 import logging
 import asyncio
+from pathlib import Path
 
 from bot import Bot
 from util.config import get_config
@@ -13,21 +14,22 @@ logging.basicConfig(
 )
 log: logging.Logger = logging.getLogger(__name__)
 
-cogs = [
-    'cogs.address',
-    'cogs.forge',
-]
-
 
 async def main() -> None:
     logging.getLogger().setLevel(get_config().log_level)
     bot: Bot = Bot(get_config().prefix)
-    for cog in cogs:
-        try:
-            await bot.load_extension(cog)
-        except Exception:
-            log.exception(f'Failed to load cog \'{cog}\'')
-            sys.exit(1)
+    for cog_path in Path('cogs').iterdir():
+        cog = str(cog_path).replace('/', '.').replace('.py', '')
+        filter_prefix = '_'
+        if cog_path.name.startswith(filter_prefix):
+            log.info(f'Skipping loading cog \'{cog}\' which starts with \'{filter_prefix}\'')
+        else:
+            try:
+                await bot.load_extension(cog)
+                log.info(f'Successfully loaded cog \'{cog}\'')
+            except Exception:
+                log.exception(f'Failed to load cog \'{cog}\'')
+                sys.exit(1)
     await bot.start(get_config().token)
 
 
