@@ -1,5 +1,6 @@
 import logging
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 from discord import app_commands, Color, Embed, File, Interaction
 from discord.ext import tasks
@@ -15,7 +16,11 @@ QUERY_INTERVAL_HOURS = 1
 def describe_event(event: Event):
     days_length = 3
     try:
-        days_until = (date.fromisoformat(event.date) - date.today()).days
+        # Seems like the timezone  can be scraped from event.start, but
+        #   - 1) don't want to rely on that element's format
+        #   - 2) the Forge website seems to always use EDT, which ZoneInfo doesn't understand
+        tz = ZoneInfo('EST')
+        days_until = (date.fromisoformat(event.date) - datetime.now(tz=tz).date()).days
     except ValueError:
         log.warn(f'Unable to parse date \'{event.date}\' for event \'{event.name}\'')
         days_until = '?' * days_length
