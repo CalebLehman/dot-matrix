@@ -52,7 +52,8 @@ class AddressCog(GroupCog, name='address'):
     async def about_command(self, interaction: Interaction) -> None:
         description = '''
 A group of commands for managing a **collection of addresses**. \
-The **goal** is to eliminate the need for all *what was your address again?*-type questions in the chat. \
+The **goal** is to eliminate the need for all *what was your address again?*-type questions in the chat.
+
 To see the available commands, type `/address` and look through the autocomplete options.
 '''
         embed: Embed = Embed(title='About `address`', description=description)

@@ -39,7 +39,8 @@ class ForgeCog(GroupCog, name='forge'):
     async def about_command(self, interaction: Interaction) -> None:
         description = f'''
 A group of commands for checking on events at **The Forge Tavern**. \
-The bot automatically checks for new events every {QUERY_INTERVAL_HOURS} hour(s). \
+The bot automatically checks [here]({FORGE_URL}) for new events every {QUERY_INTERVAL_HOURS} hour(s).
+
 To see the available commands, type `/forge` and look through the autocomplete options.
 '''
         embed: Embed = Embed(title='About `forge`', description=description)
