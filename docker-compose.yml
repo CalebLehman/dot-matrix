@@ -5,6 +5,8 @@ services:
     build: .
     volumes:
       - address-db:/app/cogs/address/database
+      - events-db:/app/cogs/events/database
 
 volumes:
   address-db:
+  events-db:

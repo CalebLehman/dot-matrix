@@ -1,10 +1,10 @@
 import sys
 import logging
 import asyncio
-from pathlib import Path
+import pathlib
 
 from bot import Bot
-from util.config import get_config
+from util.config import config
 
 
 logging.basicConfig(
@@ -12,13 +12,13 @@ logging.basicConfig(
     style='{',
     format='[{asctime}] [{levelname:8}] {name}: {message}',
 )
-log: logging.Logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    logging.getLogger().setLevel(get_config().log_level)
-    bot: Bot = Bot(get_config().prefix)
-    for cog_path in Path('cogs').iterdir():
+    logging.getLogger().setLevel(config.log_level)
+    bot = Bot(config.prefix)
+    for cog_path in pathlib.Path('cogs').iterdir():
         cog = str(cog_path).replace('/', '.').replace('.py', '')
         filter_prefix = '_'
         if cog_path.name.startswith(filter_prefix):
@@ -30,7 +30,7 @@ async def main() -> None:
             except Exception:
                 log.exception(f'Failed to load cog \'{cog}\'')
                 sys.exit(1)
-    await bot.start(get_config().token)
+    await bot.start(config.token)
 
 
 if __name__ == '__main__':

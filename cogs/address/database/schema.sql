@@ -3,4 +3,4 @@ CREATE TABLE IF NOT EXISTS Address (
   Location TEXT NOT NULL,
   PRIMARY KEY (Name),
   UNIQUE (Name COLLATE NOCASE)
-)
+);

@@ -1,12 +1,12 @@
-from aiohttp import ClientSession
-from dataclasses import dataclass
+import aiohttp
+import dataclasses
 
-from bs4 import BeautifulSoup
+import bs4
 
 FORGE_URL = 'https://theforgetavern.com/events/list/'
 
 
-@dataclass
+@dataclasses.dataclass
 class Event:
     name: str
     date: str
@@ -15,10 +15,10 @@ class Event:
 
 
 async def get_events() -> list[Event]:
-    async with ClientSession() as session:
+    async with aiohttp.ClientSession() as session:
         async with session.get(FORGE_URL) as response:
             html = await response.read()
-    soup = BeautifulSoup(html.decode('utf-8'), 'html.parser')
+    soup = bs4.BeautifulSoup(html.decode('utf-8'), 'html.parser')
     events = []
     for row in soup.find_all('div', class_='tribe-events-calendar-list__event-details'):
         events.append(Event(

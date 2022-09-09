@@ -1,44 +1,37 @@
 import os
 import sys
 import logging
-from dataclasses import dataclass
+import dataclasses
 
 from dotenv import dotenv_values
 
 
 log = logging.getLogger(__name__)
-__config = None
 
 
-@dataclass
+@dataclasses.dataclass
 class Database:
     database: str
     schema: str
 
 
-@dataclass
+@dataclasses.dataclass
 class Config:
     token: str
     prefix: str
     log_level: str
-    databases: dict[Database]
+    event_channel: str
 
 
-def get_config():
-    global __config
-    if __config is None:
-        __config = __init_config()
-    return __config
-
-
-def __init_config():
+# TODO this should probably just be a constructor
+def init_config():
     environment = {
         **dotenv_values('.env'),
         **dotenv_values('.env.dev'),
         **os.environ,
     }
     optional_variables = {
-        'BOT_LOGLEVEL': 'INFO'
+        'BOT_LOG_LEVEL': 'INFO'
     }
     for variable, default in optional_variables.items():
         if variable not in environment:
@@ -48,6 +41,7 @@ def __init_config():
     required_variables = [
         'BOT_PREFIX',
         'BOT_TOKEN',
+        'BOT_EVENTS_CHANNEL',
     ]
     for variable in required_variables:
         if variable not in environment:
@@ -58,8 +52,9 @@ def __init_config():
     return Config(
         token=environment['BOT_TOKEN'],
         prefix=environment['BOT_PREFIX'],
-        log_level=environment['BOT_LOGLEVEL'],
-        databases={
-            'address': Database(database='cogs/address/database/database.db', schema='cogs/address/database/schema.sql'),
-        }
+        log_level=environment['BOT_LOG_LEVEL'],
+        event_channel=environment['BOT_EVENTS_CHANNEL'],
     )
+
+
+config = init_config()
