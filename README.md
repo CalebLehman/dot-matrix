@@ -2,7 +2,7 @@
 
 ![Dot Matrix](./assets/dot_matrix.png)
 
-My personal, general-purpose Discord Bot for experimenting/playing around
+My general-purpose Discord Bot for experimenting/playing around
 
 ## Configuration
 
