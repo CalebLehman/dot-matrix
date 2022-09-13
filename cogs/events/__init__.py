@@ -8,6 +8,7 @@ from discord.ext import commands
 
 from util.ui import ErrorEmbed, SuccessEmbed
 from util.config import config
+from util.channel import get_bot_channel
 from cogs.events.database import events_database
 
 log = logging.getLogger(__name__)
@@ -95,22 +96,6 @@ class EventsCog(commands.GroupCog, name='events'):
     CATEGORY_NAME = 'Text Channels'
 
     @classmethod
-    async def get_channel(cls, guild: discord.Guild) -> discord.TextChannel:
-        category = discord.utils.get(guild.categories, name=cls.CATEGORY_NAME)
-        channel = discord.utils.get(guild.channels, name=config.event_channel, category=category)
-        if channel is None:
-            channel = await guild.create_text_channel(
-                name=config.event_channel,
-                category=category,
-                overwrites={
-                    guild.default_role: discord.PermissionOverwrite(send_messages=False),
-                    guild.me: discord.PermissionOverwrite(send_messages=True),
-                },
-                position=100,
-            )
-        return channel
-
-    @classmethod
     async def remove_event(cls, guild: discord.Guild, event_id: int) -> None:
         try:
             message_id = events_database.get_event_message(id=event_id)
@@ -119,7 +104,7 @@ class EventsCog(commands.GroupCog, name='events'):
         except Exception:
             log.warn(f'Failed to get message id for event with ID {event_id}')
             return
-        channel = await EventsCog.get_channel(guild)
+        channel = await get_bot_channel(guild, cls.CATEGORY_NAME, config.event_channel)
         try:
             message = await channel.fetch_message(message_id)
             await message.delete()
@@ -133,7 +118,7 @@ class EventsCog(commands.GroupCog, name='events'):
 
     @classmethod
     async def create_event(cls, event: discord.ScheduledEvent) -> None:
-        events_channel = await EventsCog.get_channel(event.guild)
+        events_channel = await get_bot_channel(event.guild, cls.CATEGORY_NAME, config.event_channel)
         event_embed = EventEmbed(event_id=event.id)
         event_view = EventView(event_id=event.id, location=event.location)
         event_message = await events_channel.send(content=event.url, embed=event_embed, view=event_view)

@@ -10,10 +10,12 @@ The following environment variables must be specified, either in the environment
 
   - `BOT_TOKEN`: The bot token from the corresponding Discord Application
   - `BOT_PREFIX`: An unused prefix for text commands
+  - `BOT_EVENTS_CHANNEL`: The channel to be created and used for augmenting Discord events
+  - `BOT_JACKBOX_CHANNEL`: The channel to be created and used for showing artifacts of Jackbox games
 
 The following environment variables can be optionally specified, either in the environment itself, or with a `.env` file:
 
-  - `BOT_LOGLEVEL`: The log level for the bot to use, defaults to `INFO`
+  - `BOT_LOG_LEVEL`: The log level for the bot to use, defaults to `INFO`
 
 ## Setup
 

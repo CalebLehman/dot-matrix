@@ -21,6 +21,7 @@ class Config:
     prefix: str
     log_level: str
     event_channel: str
+    jackbox_channel: str
 
 
 # TODO this should probably just be a constructor
@@ -42,6 +43,7 @@ def init_config():
         'BOT_PREFIX',
         'BOT_TOKEN',
         'BOT_EVENTS_CHANNEL',
+        'BOT_JACKBOX_CHANNEL',
     ]
     for variable in required_variables:
         if variable not in environment:
@@ -54,6 +56,7 @@ def init_config():
         prefix=environment['BOT_PREFIX'],
         log_level=environment['BOT_LOG_LEVEL'],
         event_channel=environment['BOT_EVENTS_CHANNEL'],
+        jackbox_channel=environment['BOT_JACKBOX_CHANNEL'],
     )
 
 
